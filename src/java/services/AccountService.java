@@ -9,6 +9,36 @@ import models.User;
 
 public class AccountService {
     
+    public boolean forgotPassword( String email, String path )
+    {
+        UserDB userDB = new UserDB();
+        
+        try
+        {
+            User user = userDB.get( email );
+            
+            if( user == null )
+                return false;
+            
+            //String to = "cprg352.steven@gmail.com";
+            String to = email;
+            String subject = "Notes App Forgot Password";
+            String template = path + "/emailtemplates/passreset.html";
+
+            HashMap<String, String> tags = new HashMap<>();
+            tags.put("firstname", user.getFirstName());
+            tags.put("lastname", user.getLastName());
+            tags.put("username", user.getEmail());
+            tags.put("password", user.getPassword());
+
+            GmailService.sendMail(to, subject, template, tags);
+            return true;
+        }
+        catch (Exception e) {}
+        
+        return false;
+    }
+    
     public User login(String email, String password, String path) {
         UserDB userDB = new UserDB();
         
